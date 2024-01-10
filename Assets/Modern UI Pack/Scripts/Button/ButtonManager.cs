@@ -65,7 +65,7 @@ namespace Michsky.MUIP
         public bool wrapAround = false;
         public bool useRipple = true;
         [Range(0.1f, 1)] public float doubleClickPeriod = 0.25f;
-        [Range(0.25f, 15)] public float fadingMultiplier = 8;
+        [Range(0.25f, 150)] public float fadingMultiplier = 8;
         [SerializeField] private AnimationSolution animationSolution = AnimationSolution.ScriptBased;
 
         // Events
@@ -99,9 +99,10 @@ namespace Michsky.MUIP
         public enum AnimationSolution { Custom, ScriptBased }
         public enum RippleUpdateMode { Normal, UnscaledTime }
 
-        [System.Serializable] public class Padding 
+        [System.Serializable]
+        public class Padding
         {
-            public int left = 20; 
+            public int left = 20;
             public int right = 20;
             public int top = 5;
             public int bottom = 5;
@@ -156,12 +157,12 @@ namespace Michsky.MUIP
 
         public void UpdateUI()
         {
-            if (autoFitContent == false) 
+            if (autoFitContent == false)
             {
                 if (mainFitter != null) { mainFitter.enabled = false; }
                 if (mainLayout != null) { mainLayout.enabled = false; }
-                if (targetFitter != null) 
-                { 
+                if (targetFitter != null)
+                {
                     targetFitter.enabled = false;
 
                     if (targetRect != null)
@@ -259,9 +260,9 @@ namespace Michsky.MUIP
 
         public void SetText(string text) { buttonText = text; UpdateUI(); }
         public void SetIcon(Sprite icon) { buttonIcon = icon; UpdateUI(); }
-        
-        public void Interactable(bool value) 
-        { 
+
+        public void Interactable(bool value)
+        {
             isInteractable = value;
 
             if (gameObject.activeInHierarchy == false) { return; }
