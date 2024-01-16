@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 using UnityEngine.EventSystems;
+using System;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -11,7 +12,7 @@ using UnityEngine.InputSystem;
 namespace Michsky.MUIP
 {
     [ExecuteInEditMode]
-    public class ButtonManager : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler, ISubmitHandler
+    public class ButtonManager : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler, ISubmitHandler
     {
         // Content
         public Sprite buttonIcon;
@@ -73,6 +74,8 @@ namespace Michsky.MUIP
         public UnityEvent onDoubleClick = new UnityEvent();
         public UnityEvent onHover = new UnityEvent();
         public UnityEvent onLeave = new UnityEvent();
+        public UnityEvent onButtonDown = new UnityEvent();
+        public UnityEvent onButtonUp = new UnityEvent();
 
         // Ripple
         [SerializeField] private RippleUpdateMode rippleUpdateMode = RippleUpdateMode.UnscaledTime;
@@ -344,7 +347,23 @@ namespace Michsky.MUIP
 #elif ENABLE_INPUT_SYSTEM
                 if (targetCanvas != null && (targetCanvas.renderMode == RenderMode.ScreenSpaceCamera || targetCanvas.renderMode == RenderMode.WorldSpace)) { CreateRipple(targetCanvas.worldCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue())); }
                 else { CreateRipple(Mouse.current.position.ReadValue()); }
-#endif
+#endif      
+            StartCoroutine("ButtonHold");
+        }
+
+        IEnumerator ButtonHold()
+        {
+            for (; ; )
+            {
+                onButtonDown.Invoke();
+                yield return new WaitForSeconds(.02f);
+            }
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            StopCoroutine("ButtonHold");
+            onButtonUp.Invoke();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
