@@ -110,6 +110,8 @@ namespace Michsky.MUIP
             var onDoubleClick = serializedObject.FindProperty("onDoubleClick");
             var onHover = serializedObject.FindProperty("onHover");
             var onLeave = serializedObject.FindProperty("onLeave");
+            var onButtonDown = serializedObject.FindProperty("onButtonDown");
+            var onButtonUp = serializedObject.FindProperty("onButtonUp");
 
             switch (buttonTarget.latestTabIndex)
             {
@@ -178,6 +180,8 @@ namespace Michsky.MUIP
                     EditorGUILayout.PropertyField(onDoubleClick, new GUIContent("On Double Click"), true);
                     EditorGUILayout.PropertyField(onHover, new GUIContent("On Hover"), true);
                     EditorGUILayout.PropertyField(onLeave, new GUIContent("On Leave"), true);
+                    EditorGUILayout.PropertyField(onButtonDown, new GUIContent("On Button Down"), true);
+                    EditorGUILayout.PropertyField(onButtonUp, new GUIContent("On Button Up"), true);
                     break;
 
                 case 1:
@@ -239,21 +243,21 @@ namespace Michsky.MUIP
                         GUILayout.BeginVertical(EditorStyles.helpBox);
                         MUIPEditorHandler.DrawPropertyPlain(navigationMode, customSkin, "Navigation Mode");
 
-                        if (buttonTarget.navigationMode == UnityEngine.UI.Navigation.Mode.Horizontal) 
+                        if (buttonTarget.navigationMode == UnityEngine.UI.Navigation.Mode.Horizontal)
                         {
                             EditorGUI.indentLevel = 1;
-                         //   GUILayout.Space(-3);
+                            //   GUILayout.Space(-3);
                             wrapAround.boolValue = MUIPEditorHandler.DrawToggle(wrapAround.boolValue, customSkin, "Wrap Around");
-                          //  GUILayout.Space(4);
+                            //  GUILayout.Space(4);
                             EditorGUI.indentLevel = 0;
                         }
 
-                        else if (buttonTarget.navigationMode == UnityEngine.UI.Navigation.Mode.Vertical) 
-                        { 
+                        else if (buttonTarget.navigationMode == UnityEngine.UI.Navigation.Mode.Vertical)
+                        {
                             wrapAround.boolValue = MUIPEditorHandler.DrawTogglePlain(wrapAround.boolValue, customSkin, "Wrap Around");
                         }
 
-                        else if (buttonTarget.navigationMode == UnityEngine.UI.Navigation.Mode.Explicit) 
+                        else if (buttonTarget.navigationMode == UnityEngine.UI.Navigation.Mode.Explicit)
                         {
                             EditorGUI.indentLevel = 1;
                             MUIPEditorHandler.DrawPropertyPlain(selectOnUp, customSkin, "Select On Up");
