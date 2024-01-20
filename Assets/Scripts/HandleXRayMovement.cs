@@ -17,23 +17,35 @@ public class HandleXRayMovement : MonoBehaviour
         // todo: code functionality to reset camera pos/tilt (only reset whichever is selected?)
     }
 
-    public void Tilt()
+    public void HandleSwitch()
     {
-        // for tilt set look at object in collimate vcam and adjust body params I think if it is off
+        isPositioning = !isPositioning;
     }
 
     // hard-coded based on orientation of xray/patient!!
-    public void Move(string pos)
+    public void HandleMovement(string pos)
     {
-        if (isPositioning)
+        if (pos == "Up")
         {
-            if (pos == "Up")
+            if (isPositioning)
                 vCamTracker.position = vCamTracker.position - new Vector3(sensitivity * Time.deltaTime, 0, 0);
-            else if (pos == "Down")
+        }
+
+        else if (pos == "Down")
+        {
+            if (isPositioning)
                 vCamTracker.position = vCamTracker.position + new Vector3(sensitivity * Time.deltaTime, 0, 0);
-            else if (pos == "Left")
+        }
+
+        else if (pos == "Left")
+        {
+            if (isPositioning)
                 vCamTracker.position = vCamTracker.position - new Vector3(0, 0, sensitivity * Time.deltaTime);
-            else if (pos == "Right")
+        }
+
+        else if (pos == "Right")
+        {
+            if (isPositioning)
                 vCamTracker.position = vCamTracker.position + new Vector3(0, 0, sensitivity * Time.deltaTime);
         }
     }
