@@ -12,6 +12,12 @@ public class HandleXRayMovement : MonoBehaviour
 
     float sensitivity = 1f;
 
+
+    // some variables to set the default camera's position to cinemachine
+    [SerializeField]
+    private Camera xrayPicCam;
+
+
     public void Reset()
     {
         // todo: code functionality to reset camera pos/tilt (only reset whichever is selected?)
@@ -27,14 +33,31 @@ public class HandleXRayMovement : MonoBehaviour
     {
         if (isPositioning)
         {
+            var moveAmount = sensitivity * Time.deltaTime;
             if (pos == "Up")
-                vCamTracker.position = vCamTracker.position - new Vector3(sensitivity * Time.deltaTime, 0, 0);
+            {
+                var vec3 = new Vector3(moveAmount, 0, 0);
+                vCamTracker.position -= vec3;
+                xrayPicCam.transform.position -= vec3;
+            }
             else if (pos == "Down")
-                vCamTracker.position = vCamTracker.position + new Vector3(sensitivity * Time.deltaTime, 0, 0);
+            {
+                var vec3 = new Vector3(moveAmount, 0, 0);
+                vCamTracker.position += vec3;
+                xrayPicCam.transform.position += vec3;
+            }
             else if (pos == "Left")
-                vCamTracker.position = vCamTracker.position - new Vector3(0, 0, sensitivity * Time.deltaTime);
+            {
+                var vec3 = new Vector3(0, 0, moveAmount);
+                vCamTracker.position -= vec3;
+                xrayPicCam.transform.position -= vec3;
+            }
             else if (pos == "Right")
-                vCamTracker.position = vCamTracker.position + new Vector3(0, 0, sensitivity * Time.deltaTime);
+            {
+                var vec3 = new Vector3(0, 0, moveAmount);
+                vCamTracker.position += vec3;
+                xrayPicCam.transform.position += vec3;
+            }
         }
     }
 }

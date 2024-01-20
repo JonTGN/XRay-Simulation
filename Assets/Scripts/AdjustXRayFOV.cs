@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using UnityEngine.Networking;
 using UnityEditor;
+using Cinemachine;
 
 public class AdjustXRayFOV : MonoBehaviour
 {
@@ -30,6 +31,9 @@ public class AdjustXRayFOV : MonoBehaviour
     // need to manually set each time cookies are generated :(
     public List<Texture> cookieTexs;
 
+    // reference to the other camera that will actually take the xray pic
+    public Camera cam;
+
     public void HorizontalSliderChanged(Slider slider)
     {
         hSliderValue = Convert.ToInt16(slider.value);
@@ -51,6 +55,35 @@ public class AdjustXRayFOV : MonoBehaviour
         // update cookie tex on start
         GenerateCookieArr();
         UpdateCookieTex();
+    }
+
+    // just do it here to avoid unecessary references all over the place 
+    private static string ScreenShotName(int width, int height)
+    {
+        return string.Format("{0}/Screenshots/screen_{1}x{2}_{3}.png",
+                             Application.dataPath,
+                             width, height,
+                             System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
+    }
+
+    public void TakeXRay()
+    {
+        int resWidth = 200;
+        int resHeight = 200;
+
+        RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
+        cam.targetTexture = rt;
+        Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+        cam.Render();
+        RenderTexture.active = rt;
+        screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        cam.targetTexture = null;
+        RenderTexture.active = null;
+        Destroy(rt);
+        byte[] bytes = screenShot.EncodeToPNG();
+        string filename = ScreenShotName(resWidth, resHeight);
+        File.WriteAllBytes(filename, bytes);
+        Debug.Log(string.Format("logged screenshot to: {0}", filename));
     }
 
     private void GenerateCookieArr()
