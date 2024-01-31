@@ -35,7 +35,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - xray-postprocessing
   - noedit
   m_SortingLayers:
   - name: Default
