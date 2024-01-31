@@ -28,11 +28,23 @@ public class AdjustXRayFOV : MonoBehaviour
     private int max = 256;
     private int spacing = 8;
 
+
+    public int cropx = 256;
+    public int cropy = 256;
+    public int imgHeight;
+    public int imgWidth;
+    public bool debug = false;
+
     // need to manually set each time cookies are generated :(
     public List<Texture> cookieTexs;
 
     // reference to the other camera that will actually take the xray pic
     public Camera cam;
+
+    // res correlating to cookie tex
+    private int x_cookie_val;
+    private int y_cookie_val;
+    private int upscale = 8;  // upscale * x/y cookie val = res
 
     public void HorizontalSliderChanged(Slider slider)
     {
@@ -68,8 +80,8 @@ public class AdjustXRayFOV : MonoBehaviour
 
     public void TakeXRay()
     {
-        int resWidth = 200;
-        int resHeight = 200;
+        int resWidth = 256 * upscale;
+        int resHeight = 256 * upscale;
 
         RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
         cam.targetTexture = rt;
@@ -77,6 +89,45 @@ public class AdjustXRayFOV : MonoBehaviour
         cam.Render();
         RenderTexture.active = rt;
         screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+
+        /*
+        (2048x2048)
+        [cropx, cropy, imgH, imgW]
+        (h=1, v=32) 730, 800, 800, 560
+        (h=32, v=1) 630, 900, 600, 760
+        (32, 32) 630, 800, 800, 760     
+        */
+        // img width/height should correlate to the collimation settings
+        // if width decreases by 300, x needs to += by 150 to still be set in the middle
+
+        if (!debug)
+        {
+            // initialize base crop values as if sliders are 1 x 1 to simplify math
+            cropx = 765;
+            cropy = 900;
+            imgHeight = 600;
+            imgWidth = 500;
+
+            // at 2048x2048 res each tick on the slider represents about 3.125 pixels for crop and 6.25 for img HxW
+            if (hSliderValue != 1)
+            {
+                cropx -= (int)(3.125 * hSliderValue);
+                imgWidth += (int)(6.25 * hSliderValue);
+            }
+
+            if (vSliderValue != 1)
+            {
+                cropy -= (int)(3.125 * vSliderValue);
+                imgHeight += (int)(6.25 * vSliderValue);
+            }
+        }
+
+        Texture2D croppedTexture = new Texture2D(imgWidth, imgHeight);
+        Texture2D originalTextureResized = screenShot;
+        croppedTexture.SetPixels(originalTextureResized.GetPixels(cropx, cropy, imgWidth, imgHeight));
+        croppedTexture.Apply();
+        screenShot = croppedTexture;
+
         cam.targetTexture = null;
         RenderTexture.active = null;
         Destroy(rt);
@@ -116,8 +167,8 @@ public class AdjustXRayFOV : MonoBehaviour
 
     private string GetCookieTex()
     {
-        int x_cookie_val = cookieVals.OrderBy(x => Math.Abs((long)x - (hSliderValue + min))).First();
-        int y_cookie_val = cookieVals.OrderBy(x => Math.Abs((long)x - (vSliderValue + min))).First();
+        x_cookie_val = cookieVals.OrderBy(x => Math.Abs((long)x - (hSliderValue + min))).First();
+        y_cookie_val = cookieVals.OrderBy(x => Math.Abs((long)x - (vSliderValue + min))).First();
 
         return $"{x_cookie_val}_{y_cookie_val}";
     }
