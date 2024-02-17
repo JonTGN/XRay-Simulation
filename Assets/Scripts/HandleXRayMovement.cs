@@ -8,10 +8,10 @@ public class HandleXRayMovement : MonoBehaviour
     private bool isPositioning = true;
 
     [SerializeField]
+    private float sensitivity = 1f;
+
+    [SerializeField]
     private Transform vCamTracker;
-
-    float sensitivity = 1f;
-
 
     // some variables to set the default camera's position to cinemachine
     [SerializeField]

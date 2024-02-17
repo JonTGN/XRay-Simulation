@@ -11,6 +11,9 @@ ATTRIBUTIONS:
 public class XRAYUIManager : MonoBehaviour
 {
     [SerializeField]
+    private List<GameObject> colElems = new List<GameObject>();
+
+    [SerializeField]
     private List<GameObject> uiElements = new List<GameObject>();
 
     [SerializeField]
@@ -35,6 +38,14 @@ public class XRAYUIManager : MonoBehaviour
     public void XRAY()
     {
         LoadUIElement(3);
+    }
+
+    public void HideColElems()
+    {
+        foreach (var elem in colElems)
+        {
+            elem.SetActive(!elem.activeSelf);
+        }
     }
 
     private void LoadUIElement(int idx)

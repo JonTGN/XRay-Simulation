@@ -103,8 +103,8 @@ public class AdjustXRayFOV : MonoBehaviour
         if (!debug)
         {
             // initialize base crop values as if sliders are 1 x 1 to simplify math
-            cropx = 765;
-            cropy = 900;
+            cropx = 780;
+            cropy = 800;
             imgHeight = 600;
             imgWidth = 500;
 

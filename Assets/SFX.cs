@@ -20,7 +20,7 @@ public class SFX : MonoBehaviour
     public void TakeXray()
     {
         Debug.Log("Attempting to take xray");
-        if (isAudioPlaying) { Debug.Log("xray failed | already taking one");  return; }
+        if (isAudioPlaying) { Debug.Log("xray failed | already taking one"); return; }
 
         StartCoroutine(Scan());
     }
@@ -30,9 +30,9 @@ public class SFX : MonoBehaviour
 
         isAudioPlaying = true;
 
-        audioSource.PlayOneShot(XrayScanningClip, volume);
+        //audioSource.PlayOneShot(XrayScanningClip, volume);
 
-        yield return new WaitForSeconds(8.8f);
+        yield return new WaitForSeconds(0); //8.8f);
 
         audioSource.PlayOneShot(XrayDonClip, volume);
 
