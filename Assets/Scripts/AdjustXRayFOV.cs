@@ -12,6 +12,7 @@ using Cinemachine;
 
 public class AdjustXRayFOV : MonoBehaviour
 {
+    public WriteImgWebCall writeImgWebCall;
     public int hSliderValue;
     public int vSliderValue;
 
@@ -72,10 +73,10 @@ public class AdjustXRayFOV : MonoBehaviour
     // just do it here to avoid unecessary references all over the place 
     private static string ScreenShotName(int width, int height)
     {
-        //return string.Format(@"C:\Websites\xraytest\Screenshots\screen_{0}x{1}_{2}.png",
-        //                     width,
-        //                     height,
-        //                     System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm"));
+        return string.Format("screen_{0}x{1}_{2}.png",
+                             width,
+                             height,
+                             System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm"));
 
         // localhost
         return string.Format("{0}/Screenshots/screen_{1}x{2}_{3}.png",
@@ -139,10 +140,14 @@ public class AdjustXRayFOV : MonoBehaviour
         RenderTexture.active = null;
         Destroy(rt);
         byte[] bytes = screenShot.EncodeToPNG();
-        Debug.Log("bytes: " + bytes.ToString());
         string filename = ScreenShotName(resWidth, resHeight);
-        File.WriteAllBytes(filename, bytes);
-        Debug.Log(string.Format("logged screenshot to: {0}", filename));
+
+        // server
+        writeImgWebCall.SendPostReq(bytes, filename);
+
+        // localhost 
+        //File.WriteAllBytes(filename, bytes);
+        //Debug.Log(string.Format("logged screenshot to: {0}", filename));
     }
 
     private void GenerateCookieArr()
