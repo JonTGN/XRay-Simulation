@@ -142,8 +142,11 @@ public class AdjustXRayFOV : MonoBehaviour
         byte[] bytes = screenShot.EncodeToPNG();
         string filename = ScreenShotName(resWidth, resHeight);
 
+        Debug.Log("BYTE ARR: " + bytes[0] + " " + bytes[1] + " " + bytes[2] + " " + bytes[3] + " " + bytes[4] + " " + bytes[5]);
+
         // server
-        writeImgWebCall.SendPostReq(bytes, filename);
+        Debug.Log("Sending req to web...");
+        StartCoroutine(writeImgWebCall.SendPostReq(bytes, filename));
 
         // localhost 
         //File.WriteAllBytes(filename, bytes);

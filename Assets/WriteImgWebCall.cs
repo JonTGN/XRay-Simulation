@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class WriteImgWebCall : MonoBehaviour
 {
-    readonly string postURL = "http://170.64.74.6/write_img.php";
+    readonly string postURL = "http://170.64.74.6:5383/write_img/";
 
     public IEnumerator SendPostReq(byte[] byteArr, string fileName)
     {
@@ -14,6 +15,9 @@ public class WriteImgWebCall : MonoBehaviour
         form.Add(new MultipartFormDataSection("fileName", fileName));
 
         UnityWebRequest req = UnityWebRequest.Post(postURL, form);
+
+        // Set the content type header
+        req.SetRequestHeader("Content-Type", "application/octet-stream");
 
         yield return req.SendWebRequest();
 
