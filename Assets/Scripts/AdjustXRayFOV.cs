@@ -9,9 +9,11 @@ using System.Net;
 using UnityEngine.Networking;
 using UnityEditor;
 using Cinemachine;
+using TMPro;
 
 public class AdjustXRayFOV : MonoBehaviour
 {
+    public TextMeshProUGUI tmp_text;
     public WriteImgWebCall writeImgWebCall;
     public int hSliderValue;
     public int vSliderValue;
@@ -73,10 +75,10 @@ public class AdjustXRayFOV : MonoBehaviour
     // just do it here to avoid unecessary references all over the place 
     private static string ScreenShotName(int width, int height)
     {
-        return string.Format("screen_{0}x{1}_{2}.png",
-                             width,
-                             height,
-                             System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm"));
+        //return string.Format("screen_{0}x{1}_{2}.png",
+        //                     width,
+        //                     height,
+        //                     System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm"));
 
         // localhost
         return string.Format("{0}/Screenshots/screen_{1}x{2}_{3}.png",
@@ -145,12 +147,13 @@ public class AdjustXRayFOV : MonoBehaviour
         Debug.Log("BYTE ARR: " + bytes[0] + " " + bytes[1] + " " + bytes[2] + " " + bytes[3] + " " + bytes[4] + " " + bytes[5]);
 
         // server
-        Debug.Log("Sending req to web...");
-        StartCoroutine(writeImgWebCall.SendPostReq(bytes, filename));
+        //Debug.Log("Sending req to web...");
+        //StartCoroutine(writeImgWebCall.SendPostReq(bytes, filename));
 
         // localhost 
-        //File.WriteAllBytes(filename, bytes);
-        //Debug.Log(string.Format("logged screenshot to: {0}", filename));
+        tmp_text.text = filename;
+        File.WriteAllBytes(filename, bytes);
+        Debug.Log(string.Format("logged screenshot to: {0}", filename));
     }
 
     private void GenerateCookieArr()
