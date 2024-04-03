@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/init transition - splashscreen.unity
+    guid: 30046566e58e410478da27fdbdb256bf
+  - enabled: 0
     path: Assets/Scenes/xray scene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

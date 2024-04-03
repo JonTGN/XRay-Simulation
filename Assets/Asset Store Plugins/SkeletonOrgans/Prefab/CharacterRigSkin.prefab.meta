@@ -1,14 +1,7 @@
 fileFormatVersion: 2
-guid: 657ce1e2add3f3e45828a997bf0b2a82
+guid: cfb85f6b667c87d4bb5831aa5ede5384
 PrefabImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 175142
-  packageName: Skeleton With Internal Organs Rigged And Skinned
-  packageVersion: 1.0
-  assetPath: Assets/SkeletonOrgans/Prefab/CharacterRigSkin.prefab
-  uploadId: 380302

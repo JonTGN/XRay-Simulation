@@ -13,10 +13,14 @@ using TMPro;
 
 public class AdjustXRayFOV : MonoBehaviour
 {
+    public bool saveImageLocally = false;
     public TextMeshProUGUI tmp_text;
     public WriteImgWebCall writeImgWebCall;
     public int hSliderValue;
     public int vSliderValue;
+
+    // xray image
+    public RawImage imageContainer;
 
     // use to set val init
     public Slider hSlider;
@@ -150,10 +154,41 @@ public class AdjustXRayFOV : MonoBehaviour
         //Debug.Log("Sending req to web...");
         //StartCoroutine(writeImgWebCall.SendPostReq(bytes, filename));
 
-        // localhost 
-        tmp_text.text = filename;
-        File.WriteAllBytes(filename, bytes);
-        Debug.Log(string.Format("logged screenshot to: {0}", filename));
+        // localhost - log to screenshot dir
+        if (saveImageLocally)
+        {
+            tmp_text.text = filename;
+            File.WriteAllBytes(filename, bytes);
+            Debug.Log(string.Format("logged screenshot to: {0}", filename));
+        }
+
+        // encode bytes into image texture to display on final screen
+        LoadImageIntoCanvas(bytes);
+    }
+
+    // Function to load image from raw bytes
+    private void LoadImageIntoCanvas(byte[] imageData)
+    {
+        // Create a new texture
+        Texture2D texture = new Texture2D(2, 2);
+
+        // Load image data into the texture
+        if (texture.LoadImage(imageData))
+        {
+            // Set texture to RawImage
+            imageContainer.texture = texture;
+
+            // Calculate aspect ratio
+            float aspectRatio = (float)texture.width / texture.height;
+
+            // Adjust size of RawImage based on aspect ratio
+            RectTransform rectTransform = imageContainer.rectTransform;
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.y * aspectRatio, rectTransform.sizeDelta.y);
+        }
+        else
+        {
+            Debug.LogError("Failed to load image from bytes.");
+        }
     }
 
     private void GenerateCookieArr()
