@@ -46,7 +46,8 @@ public class AdjustXRayFOV : MonoBehaviour
     public List<Texture> cookieTexs;
 
     // reference to the other camera that will actually take the xray pic
-    public Camera cam;
+    public Camera skinXrayCam;
+    public Camera bonesXrayCam;
 
     // res correlating to cookie tex
     private int x_cookie_val;
@@ -97,23 +98,39 @@ public class AdjustXRayFOV : MonoBehaviour
         int resWidth = 256 * upscale;
         int resHeight = 256 * upscale;
 
-        RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
-        cam.targetTexture = rt;
-        Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
-        cam.Render();
-        RenderTexture.active = rt;
-        screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        //RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
+        //skinXrayCam.targetTexture = rt;
+        //Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+        //skinXrayCam.Render();
+        //RenderTexture.active = rt;
+        //screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
 
-        /*
-        (2048x2048)
-        [cropx, cropy, imgH, imgW]
-        (h=1, v=32) 730, 800, 800, 560
-        (h=32, v=1) 630, 900, 600, 760
-        (32, 32) 630, 800, 800, 760     
-        */
-        // img width/height should correlate to the collimation settings
-        // if width decreases by 300, x needs to += by 150 to still be set in the middle
+        // bones + skin rendering:
+        RenderTexture rtSkin = new RenderTexture(resWidth, resHeight, 24);
+        RenderTexture rtBones = new RenderTexture(resWidth, resHeight, 24);
 
+        // Set the target textures for both cameras
+        skinXrayCam.targetTexture = rtSkin;
+        bonesXrayCam.targetTexture = rtBones;
+
+        // Render both cameras
+        skinXrayCam.Render();
+        bonesXrayCam.Render();
+
+        // Create textures to hold the camera renders
+        Texture2D skinTexture = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+        Texture2D bonesTexture = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+
+        // Read pixels from the RenderTextures
+        RenderTexture.active = rtSkin;
+        skinTexture.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        RenderTexture.active = rtBones;
+        bonesTexture.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+
+        // Reset active RenderTexture
+        RenderTexture.active = null;
+
+        // get crop values
         if (!debug)
         {
             // initialize base crop values as if sliders are 1 x 1 to simplify math
@@ -136,34 +153,78 @@ public class AdjustXRayFOV : MonoBehaviour
             }
         }
 
-        Texture2D croppedTexture = new Texture2D(imgWidth, imgHeight);
-        Texture2D originalTextureResized = screenShot;
-        croppedTexture.SetPixels(originalTextureResized.GetPixels(cropx, cropy, imgWidth, imgHeight));
-        croppedTexture.Apply();
-        screenShot = croppedTexture;
 
-        cam.targetTexture = null;
-        RenderTexture.active = null;
-        Destroy(rt);
-        byte[] bytes = screenShot.EncodeToPNG();
-        string filename = ScreenShotName(resWidth, resHeight);
+        //Texture2D croppedTexture = new Texture2D(imgWidth, imgHeight);
+        //Texture2D originalTextureResized = screenShot;
+        //croppedTexture.SetPixels(originalTextureResized.GetPixels(cropx, cropy, imgWidth, imgHeight));
+        //croppedTexture.Apply();
+        //screenShot = croppedTexture;
 
-        Debug.Log("BYTE ARR: " + bytes[0] + " " + bytes[1] + " " + bytes[2] + " " + bytes[3] + " " + bytes[4] + " " + bytes[5]);
+        //skinXrayCam.targetTexture = null;
+        //RenderTexture.active = null;
+        //Destroy(rt);
+        //byte[] bytes = screenShot.EncodeToPNG();
+        //string filename = ScreenShotName(resWidth, resHeight);
+
+        // Define the crop region
+        Rect cropRect = new Rect(cropx, cropy, imgWidth, imgHeight);
+
+        // Crop textures
+        skinTexture = CropTexture(skinTexture, cropRect);
+        bonesTexture = CropTexture(bonesTexture, cropRect);
+
+        // Overlay the pixels from the second camera onto the first camera's pixels
+        Color[] skinPixels = skinTexture.GetPixels();
+        Color[] bonesPixels = bonesTexture.GetPixels();
+
+        for (int i = 0; i < skinPixels.Length; i++)
+        {
+            // Overlay the bones texture onto the skin texture
+            skinPixels[i] = Color.Lerp(skinPixels[i], bonesPixels[i], 0.38f); // last float is linear blend amnt
+        }
+
+        // Apply the modified pixels back to the skinTexture
+        skinTexture.SetPixels(skinPixels);
+        skinTexture.Apply();
+
+        // Encode the modified texture to PNG bytes
+        byte[] bytes = skinTexture.EncodeToPNG();
+
+        // Clean up
+        skinXrayCam.targetTexture = null;
+        bonesXrayCam.targetTexture = null;
+        Destroy(rtSkin);
+        Destroy(rtBones);
 
         // server
         //Debug.Log("Sending req to web...");
         //StartCoroutine(writeImgWebCall.SendPostReq(bytes, filename));
 
         // localhost - log to screenshot dir
-        if (saveImageLocally)
-        {
-            tmp_text.text = filename;
-            File.WriteAllBytes(filename, bytes);
-            Debug.Log(string.Format("logged screenshot to: {0}", filename));
-        }
+        //if (saveImageLocally)
+        //{
+        //    tmp_text.text = filename;
+        //    File.WriteAllBytes(filename, bytes);
+        //    Debug.Log(string.Format("logged screenshot to: {0}", filename));
+        //}
 
         // encode bytes into image texture to display on final screen
         LoadImageIntoCanvas(bytes);
+    }
+
+    Texture2D CropTexture(Texture2D texture, Rect cropRect)
+    {
+        int x = Mathf.FloorToInt(cropRect.x);
+        int y = Mathf.FloorToInt(cropRect.y);
+        int width = Mathf.FloorToInt(cropRect.width);
+        int height = Mathf.FloorToInt(cropRect.height);
+
+        Color[] pixels = texture.GetPixels(x, y, width, height);
+        Texture2D croppedTexture = new Texture2D(width, height);
+        croppedTexture.SetPixels(pixels);
+        croppedTexture.Apply();
+
+        return croppedTexture;
     }
 
     // Function to load image from raw bytes

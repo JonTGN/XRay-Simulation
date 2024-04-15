@@ -5,6 +5,8 @@ using UnityEngine;
 public class JavascriptHook : MonoBehaviour
 {
     [SerializeField] sceneIntroductionManager SIMngr;
+    [SerializeField] PatientPositioningManager PatPosMngr;
+    [SerializeField] EndingSplashScreenManager ESSMngr;
 
     public void LoadScenario(string scenarioName)
     {
@@ -21,12 +23,13 @@ public class JavascriptHook : MonoBehaviour
                     SIMngr.introText = "PA Foot (not implemented!)";
                     break;
                 default:
-                    SIMngr.introText = "Nothing found with that name!";
-                    SIMngr.SceneLoaded();
+                    SIMngr.introText = "Scene Type Not Implemented!";
                     break;
             }
             SIMngr.SceneLoaded();
             SIMngr.loadScene = sceneType;
+            ESSMngr.selectedSceneType = sceneType;
+            PatPosMngr.InitPatientMenu();
         }
         else
         {

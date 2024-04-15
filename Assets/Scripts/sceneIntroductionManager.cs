@@ -16,6 +16,7 @@ public class sceneIntroductionManager : MonoBehaviour
     [SerializeField] private TMP_Text introTextTMPObj;
     public string introText = "";
     [SerializeField] private CinemachineVirtualCamera introVCam;
+    public GameObject selectedScenario;
 
     // existing UI
     [SerializeField] private CanvasGroup menuUIGroup;
@@ -48,7 +49,8 @@ public class sceneIntroductionManager : MonoBehaviour
         introTextTMPObj.text = introText;
 
         // find GO correlating with sceneType and enable it, **GO name will always == Enum**
-        characterManager.transform.Find(loadScene.ToString()).gameObject.SetActive(true);
+        selectedScenario = characterManager.transform.Find(loadScene.ToString()).gameObject; // will use this later to manage different variations of the character
+        selectedScenario.SetActive(true);
     }
 
     void Update()

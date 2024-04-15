@@ -27,6 +27,8 @@ public class XRAYUIManager : MonoBehaviour
     [SerializeField]
     private GameObject menu;
 
+    [SerializeField] private EndingSplashScreenManager ESSManager;
+
     public void MachineSettings()
     {
         // this is the first setting that is loaded
@@ -75,6 +77,7 @@ public class XRAYUIManager : MonoBehaviour
 
     public void LoadFinalXRayResult()
     {
+        ESSManager.CalculateGrade(); // this function will apply correct scoring to the outro
         LoadUIElement(999999); // hide all UI elements
         vCams[vCams.Count - 1].Priority = 1; // keep last cam hidden
 
