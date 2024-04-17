@@ -12,6 +12,9 @@ public class EndingSplashScreenManager : MonoBehaviour
     [SerializeField] private SliderManager kVpSlider;
     [SerializeField] private SliderManager mASSlider;
 
+    public TextMeshPro kvpValue;
+    public TextMeshPro masValue;
+
     [Header("This is getting set from JS Loader, DO NOT EDIT")]
     public SceneTypes selectedSceneType; // this is getting set from JS hook, DO NOT EDIT!
 
@@ -41,9 +44,13 @@ public class EndingSplashScreenManager : MonoBehaviour
 
     public void CalculateGrade()
     {
-        kVp = (int)kVpSlider.mainSlider.value;
-        mAS = mASSlider.mainSlider.value;
-        mAS = (float)Math.Round(mAS, 1);
+        // old method of getting vals from sliders
+        //kVp = (int)kVpSlider.mainSlider.value;
+        //mAS = mASSlider.mainSlider.value;
+        //mAS = (float)Math.Round(mAS, 1);
+
+        kVp = int.Parse(kvpValue.text);
+        mAS = float.Parse(masValue.text);
 
         // need to load optimal settings for this scene type
         Settings sceneSettings = optimalSettings.GetSetting(selectedSceneType);
