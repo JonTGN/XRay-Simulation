@@ -15,7 +15,10 @@ public class HandleXRayMovement : MonoBehaviour
 
     // some variables to set the default camera's position to cinemachine
     [SerializeField]
-    private Camera xrayPicCam;
+    private Camera skinXrayCam;
+
+    [SerializeField]
+    private Camera bonesXrayCam;
 
 
     public void Reset()
@@ -38,25 +41,29 @@ public class HandleXRayMovement : MonoBehaviour
             {
                 var vec3 = new Vector3(moveAmount, 0, 0);
                 vCamTracker.position -= vec3;
-                xrayPicCam.transform.position -= vec3;
+                skinXrayCam.transform.position -= vec3;
+                bonesXrayCam.transform.position -= vec3;
             }
             else if (pos == "Down")
             {
                 var vec3 = new Vector3(moveAmount, 0, 0);
                 vCamTracker.position += vec3;
-                xrayPicCam.transform.position += vec3;
+                skinXrayCam.transform.position += vec3;
+                bonesXrayCam.transform.position -= vec3;
             }
             else if (pos == "Left")
             {
                 var vec3 = new Vector3(0, 0, moveAmount);
                 vCamTracker.position -= vec3;
-                xrayPicCam.transform.position -= vec3;
+                skinXrayCam.transform.position -= vec3;
+                bonesXrayCam.transform.position -= vec3;
             }
             else if (pos == "Right")
             {
                 var vec3 = new Vector3(0, 0, moveAmount);
                 vCamTracker.position += vec3;
-                xrayPicCam.transform.position += vec3;
+                skinXrayCam.transform.position += vec3;
+                bonesXrayCam.transform.position -= vec3;
             }
         }
     }

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 /*
 ATTRIBUTIONS:
@@ -18,6 +20,14 @@ public class XRAYUIManager : MonoBehaviour
 
     [SerializeField]
     private List<CinemachineVirtualCamera> vCams = new List<CinemachineVirtualCamera>();
+
+    [SerializeField]
+    private GameObject outroScreen;
+
+    [SerializeField]
+    private GameObject menu;
+
+    [SerializeField] private EndingSplashScreenManager ESSManager;
 
     public void MachineSettings()
     {
@@ -63,6 +73,17 @@ public class XRAYUIManager : MonoBehaviour
                 uiElements[i].SetActive(true);
             }
         }
+    }
+
+    public void LoadFinalXRayResult()
+    {
+        ESSManager.CalculateGrade(); // this function will apply correct scoring to the outro
+        LoadUIElement(999999); // hide all UI elements
+        vCams[vCams.Count - 1].Priority = 1; // keep last cam hidden
+
+
+        outroScreen.SetActive(true);
+        menu.SetActive(false);
     }
 
 }
