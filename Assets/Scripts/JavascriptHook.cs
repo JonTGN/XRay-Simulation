@@ -7,6 +7,14 @@ public class JavascriptHook : MonoBehaviour
     [SerializeField] sceneIntroductionManager SIMngr;
     [SerializeField] PatientPositioningManager PatPosMngr;
     [SerializeField] EndingSplashScreenManager ESSMngr;
+    [SerializeField] RestartHandler RestartHandler;
+
+    void Start()
+    {
+        // if SelectedScene has a value, it was set in the last state, so we can just load scene from that since hook wont hit again on site
+        if (SelectedScene.sceneType != null)
+            LoadScenario(SelectedScene.sceneType);
+    }
 
     public void LoadScenario(string scenarioName)
     {
@@ -29,6 +37,7 @@ public class JavascriptHook : MonoBehaviour
             SIMngr.SceneLoaded();
             SIMngr.loadScene = sceneType;
             ESSMngr.selectedSceneType = sceneType;
+            SelectedScene.sceneType = sceneType.ToString();
             PatPosMngr.InitPatientMenu();
         }
         else
