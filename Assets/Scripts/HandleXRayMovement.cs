@@ -20,12 +20,6 @@ public class HandleXRayMovement : MonoBehaviour
     [SerializeField]
     private Camera bonesXrayCam;
 
-
-    private void Start()
-    {
-        skinXrayCam = skinXrayCam;
-    }
-
     public void Reset()
     {
         // todo: code functionality to reset camera pos/tilt (only reset whichever is selected?)
