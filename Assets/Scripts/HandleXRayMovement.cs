@@ -21,6 +21,11 @@ public class HandleXRayMovement : MonoBehaviour
     private Camera bonesXrayCam;
 
 
+    private void Start()
+    {
+        skinXrayCam = skinXrayCam;
+    }
+
     public void Reset()
     {
         // todo: code functionality to reset camera pos/tilt (only reset whichever is selected?)
@@ -49,7 +54,7 @@ public class HandleXRayMovement : MonoBehaviour
                 var vec3 = new Vector3(moveAmount, 0, 0);
                 vCamTracker.position += vec3;
                 skinXrayCam.transform.position += vec3;
-                bonesXrayCam.transform.position -= vec3;
+                bonesXrayCam.transform.position += vec3;
             }
             else if (pos == "Left")
             {
@@ -63,7 +68,7 @@ public class HandleXRayMovement : MonoBehaviour
                 var vec3 = new Vector3(0, 0, moveAmount);
                 vCamTracker.position += vec3;
                 skinXrayCam.transform.position += vec3;
-                bonesXrayCam.transform.position -= vec3;
+                bonesXrayCam.transform.position += vec3;
             }
         }
     }
